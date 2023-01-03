@@ -1,25 +1,15 @@
 describe("e2e test for Aquarium UI", () =>
 
 
+
     it('correctness DOM elements on web UI in top of page', function () {
+
         cy.visit('/')
         cy.get('body').should('exist').should('have.be.visible')
-            .parent()
-            .find('sqd-root')
-            .parent()
-            .find('tui-root')
-            .parent()
-            .find('tui-dropdown-host')
+
+        cy.get('sqd-header')
             .parent()
             .find('div')
-            .parent()
-            .find('sqd-main')
-            .parent()
-            .find('main')
-            .parent()
-            .find('sqd-header')
-            .parent()
-            .find('div').should('have.class', 'h-[64px]')
             .parent()
             .find('div')
             .parent()
@@ -51,8 +41,9 @@ describe("e2e test for Aquarium UI", () =>
     it('checking correctness of collapsing sidebar', function () {
 
         cy.visit('/')
-        cy.get('sqd-icon[name="burger-opened"]')
+        cy.get('sqd-icon[name="burger-opened"]').should('have.attr', 'name', 'burger-opened').should('have.class', 'transition-transform duration-200 cursor-pointer color-inherit')
             .click()
+            .get('sqd-icon[name="burger-opened"]').should('have.class', 'transition-transform duration-200 cursor-pointer color-inherit burger-collapsed')
 
         cy.get('aside')
             .should('have.class', "border-box h-full flex relative sidebar-width-transition ng-star-inserted sidebar-closed gap-[1px] w-[64px]")
@@ -71,7 +62,7 @@ describe("e2e test for Aquarium UI", () =>
             expect($ul.eq(0)).to.contain('Deployment key')
             expect($ul.eq(1)).to.contain('Public archives')
             expect($ul.eq(1)).to.contain('Documentation')
-            expect($ul.eq(1)).to.contain('Support chat')
+            expect($ul.eq(1)).to.contain('Contact support')
             })
 
             .parent()
@@ -81,9 +72,11 @@ describe("e2e test for Aquarium UI", () =>
     it('checking correctness of expanding sidebar', function () {
 
         cy.visit('/')
-        cy.get('sqd-icon[name="burger-opened"]')
+        cy.get('sqd-icon[name="burger-opened"]').should('have.class', 'transition-transform duration-200 cursor-pointer color-inherit')
             .click()
+            .get('sqd-icon[name="burger-opened"]').should('have.class', 'transition-transform duration-200 cursor-pointer color-inherit burger-collapsed')
             .click()
+            .get('sqd-icon[name="burger-opened"]').should('have.class', 'transition-transform duration-200 cursor-pointer color-inherit')
 
         cy.get('aside')
             .should('have.class', "border-box h-full flex relative sidebar-width-transition ng-star-inserted sidebar-open gap-[3px] w-[196px]")
@@ -102,9 +95,19 @@ describe("e2e test for Aquarium UI", () =>
             expect($ul.eq(0)).to.contain('Deployment key')
             expect($ul.eq(1)).to.contain('Public archives')
             expect($ul.eq(1)).to.contain('Documentation')
-            expect($ul.eq(1)).to.contain('Support chat')
+            expect($ul.eq(1)).to.contain('Contact support')
         })
 
         .parent()
         .find('span').should('to.be.visible')
+})
+
+    it('correctness DOM elements on web UI in sidebar after log in', function () {
+
+        cy.visit('/')
+        cy.get('p[class="body--s"]').should('have.text', ' Squid is an ETL pipeline to index on-chain data. The indexed data can be queried with a GraphQL API or stored for analytics. Learn more')
+            .parent()
+            .find('sqd-button')
+            .click()
+        cy.find('Sign in with Github')
 })
