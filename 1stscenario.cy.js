@@ -105,9 +105,41 @@ describe("e2e test for Aquarium UI", () =>
     it('correctness DOM elements on web UI in sidebar after log in', function () {
 
         cy.visit('/')
-        cy.get('p[class="body--s"]').should('have.text', ' Squid is an ETL pipeline to index on-chain data. The indexed data can be queried with a GraphQL API or stored for analytics. Learn more')
+        cy.get('p[class="body--s"]')
+            .should('have.text', ' Squid is an ETL pipeline to index on-chain data. The indexed data can be queried with a GraphQL API or stored for analytics. Learn more')
             .parent()
             .find('sqd-button')
             .click()
-        cy.find('Sign in with Github')
+        cy.get('span[class="text-[color:var(--button-text-color,inherit)] flex items-center gap-2 body--s"]')
+            .should('include.text', 'Sign in with Github')
+            .click({multiple: true, force: true})
+        cy.get('input[name="login"]')
+            .type('testsquid39testsquid39testsquid39testsq')
+        cy.get('input[type="password"]')
+            .type('Subsquid!123')
+        cy.get('input[type="submit"]')
+            .click()
+
+
+        cy.get('aside')
+            .parent()
+            .find('div').should(($div) => {
+            expect($div).to.have.length(2)
+            expect($div.eq(0)).to.be.visible
+            expect($div.eq(1)).to.not.be.visible
+        })
+            .parent()
+            .find('ul').should('include.class', 'flex flex-col gap-2').should('have.length', 3)
+            .first()
+            .parent()
+            .find('li').should(($li) => {
+            expect($li).to.have.length(6)
+            expect($li.eq(0)).to.have.text('My squids ')
+            expect($li.eq(1)).to.have.text('Deployment key ')
+            expect($li.eq(2)).to.have.text('Secrets')
+            expect($li.eq(3)).to.have.text('Public archives ')
+            expect($li.eq(4)).to.have.text(' Documentation ')
+            expect($li.eq(5)).to.have.text('Contact support')
+        })
+            .pause()
 })
