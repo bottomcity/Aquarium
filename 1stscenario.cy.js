@@ -1,8 +1,11 @@
-describe("e2e test for Aquarium UI", () =>
+//add variable to check equality of entered username in GitHub and username in breadcrumbs after log in
+
+//add function to click authorize while GitHub logging in if it's necessary
+
+let username = 'testsquid39testsquid39testsquid39testsq'
 
 
-
-    it('correctness DOM elements on web UI in top of page', function () {
+it('correctness DOM elements on web UI in top of page', function () {
 
         cy.visit('/')
         cy.get('body').should('exist').should('have.be.visible')
@@ -37,20 +40,22 @@ describe("e2e test for Aquarium UI", () =>
 
         //below checking that profile and alert invisible while user isn't logged in
 
+        cy.get('div[class="flex items-center gap-10"]')
+            .should('be.visible').should('have.length', '1')
+            .parent()
+            .find('sqd-version-limit-alert').should('not.exist')
 
-        cy.get('div[class="flex items-center gap-3"]')
+            cy.get('div[class="flex items-center gap-3"]')
             .parent()
             .find('sqd-theme-switcher').should('exist')
             .parent()
             .find('div').should(($div)=> {
             expect($div).to.have.class('hover:bg-bg-base--menu-select-hover rounded-md h-[38px] w-[38px] cursor-pointer flex')
+            })
+            .find('img[alt="Github avatar"]').should('not.exist')
+    }),
 
-
-        })
-    }))
-
-
-    it('checking correctness of collapsing sidebar', function () {
+it('checking correctness of collapsing sidebar', function () {
 
         cy.visit('/')
         cy.get('sqd-icon[name="burger-opened"]').should('have.attr', 'name', 'burger-opened').should('have.class', 'transition-transform duration-200 cursor-pointer color-inherit')
@@ -79,9 +84,9 @@ describe("e2e test for Aquarium UI", () =>
 
             .parent()
             .find('span').should('not.to.be.visible')
-    })
+    }),
 
-    it('checking correctness of expanding sidebar', function () {
+it('checking correctness of expanding sidebar', function () {
 
         cy.visit('/')
         cy.get('sqd-icon[name="burger-opened"]').should('have.class', 'transition-transform duration-200 cursor-pointer color-inherit')
@@ -112,9 +117,9 @@ describe("e2e test for Aquarium UI", () =>
 
         .parent()
         .find('span').should('to.be.visible')
-})
+    }),
 
-    it('correctness DOM elements on web UI in sidebar after log in', function () {
+it('correctness DOM elements on web UI in sidebar and top bar after log in', function () {
 
         cy.visit('/')
         cy.get('p[class="body--s"]')
@@ -126,7 +131,7 @@ describe("e2e test for Aquarium UI", () =>
             .should('include.text', 'Sign in with Github')
             .click({multiple: true, force: true})
         cy.get('input[name="login"]')
-            .type('testsquid39testsquid39testsquid39testsq')
+            .type(username)
         cy.get('input[type="password"]')
             .type('Subsquid!123{enter}')
 
@@ -135,7 +140,35 @@ describe("e2e test for Aquarium UI", () =>
         cy.wait(5000)
             .url().should('include', '/my-squids/')
 
+        cy.get('div[class="flex items-center gap-10"]')
+            .should('be.visible').should('have.length', '1')
+            .parent()
+            .find('sqd-version-limit-alert').should('exist')
 
+        cy.get('div[class="flex items-center gap-3"]')
+            .parent()
+            .find('sqd-theme-switcher').should('exist')
+            .parent()
+            .find('div').should(($div)=> {
+            expect($div).to.have.class('hover:bg-bg-base--menu-select-hover rounded-md h-[38px] w-[38px] cursor-pointer flex')
+    })
+
+        cy.get('tui-hint-box')
+            .should('not.exist')
+
+
+        cy.get('div[class="flex items-center gap-3"]')
+            .parent()
+            .find('img[alt="Github avatar"]').should('exist')
+            .click()
+        cy.get('tui-hint-box')
+            .should('be.visible')
+            .parent()
+            .find('span')
+            .should(($span)=> {
+        expect($span).to.include.text(username)
+    })
+            .pause()
 
         cy.get('div[class="flex gap-2"]')
             .parent()
@@ -149,6 +182,7 @@ describe("e2e test for Aquarium UI", () =>
             expect($span).to.have.length(5)
             expect($span.eq(0)).to.contain('Aquarium')
             expect($span.eq(2)).to.contain('My squids')
+
         })
 
         cy.get('aside')
@@ -166,16 +200,15 @@ describe("e2e test for Aquarium UI", () =>
             .parent()
             .find('ul').should('include.class', 'flex flex-col gap-2')
             .should(($ul) => {
-            expect($ul).to.have.length(3)
-            expect($ul.eq(0)).to.be.visible
-            expect($ul.eq(0)).to.be.visible
-            expect($ul.eq(1)).to.be.visible
-            expect($ul.eq(2)).to.be.visible
+                expect($ul).to.have.length(3)
+                expect($ul.eq(0)).to.be.visible
+                expect($ul.eq(0)).to.be.visible
+                expect($ul.eq(1)).to.be.visible
+                expect($ul.eq(2)).to.be.visible
 
-            //above ul eq(2) should be visible in case if user has deployed squids
+                //above ul eq(2) should be visible in case if user has deployed squids
 
             })
-
 
 
             .first()
@@ -189,5 +222,8 @@ describe("e2e test for Aquarium UI", () =>
             expect($li.eq(4)).to.have.text(' Documentation ')
             expect($li.eq(5)).to.have.text('Contact support')
         })
-            .pause()
-})
+
+
+    })
+
+
