@@ -34,7 +34,19 @@ describe("e2e test for Aquarium UI", () =>
                 expect($span.eq(2)).to.contain('My squids')
             })
 
-        cy.get('sqd-theme-switcher').should('exist')
+
+        //below checking that profile and alert invisible while user isn't logged in
+
+
+        cy.get('div[class="flex items-center gap-3"]')
+            .parent()
+            .find('sqd-theme-switcher').should('exist')
+            .parent()
+            .find('div').should(($div)=> {
+            expect($div).to.have.class('hover:bg-bg-base--menu-select-hover rounded-md h-[38px] w-[38px] cursor-pointer flex')
+
+
+        })
     }))
 
 
@@ -118,9 +130,12 @@ describe("e2e test for Aquarium UI", () =>
         cy.get('input[type="password"]')
             .type('Subsquid!123{enter}')
 
-        //checking correctness of redirect after login on GitHub
+        //below checking correctness of redirect after login on GitHub
+
         cy.wait(5000)
             .url().should('include', '/my-squids/')
+
+
 
         cy.get('div[class="flex gap-2"]')
             .parent()
@@ -144,7 +159,7 @@ describe("e2e test for Aquarium UI", () =>
             expect($div.eq(0)).to.be.visible
             expect($div.eq(1)).to.be.visible
 
-            // div eq(1) should be visible in case if user has deployed squids
+            //above div eq(1) should be visible in case if user has deployed squids
 
         })
             .first()
@@ -157,7 +172,7 @@ describe("e2e test for Aquarium UI", () =>
             expect($ul.eq(1)).to.be.visible
             expect($ul.eq(2)).to.be.visible
 
-            // ul eq(2) should be visible in case if user has deployed squids
+            //above ul eq(2) should be visible in case if user has deployed squids
 
             })
 
