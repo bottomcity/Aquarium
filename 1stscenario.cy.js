@@ -116,20 +116,40 @@ describe("e2e test for Aquarium UI", () =>
         cy.get('input[name="login"]')
             .type('testsquid39testsquid39testsquid39testsq')
         cy.get('input[type="password"]')
-            .type('Subsquid!123')
-        cy.get('input[type="submit"]')
-            .click()
+            .type('Subsquid!123{enter}')
+
+        //checking correctness of redirect after login on GitHub
+
+        cy.url().should('include', '/my-squids/')
 
 
         cy.get('aside')
+            .wait(5000)
             .parent()
             .find('div').should(($div) => {
             expect($div).to.have.length(2)
             expect($div.eq(0)).to.be.visible
-            expect($div.eq(1)).to.not.be.visible
+            expect($div.eq(1)).to.be.visible
+
+            // div eq(1) should be visible in case if user has deployed squids
+
         })
+            .first()
             .parent()
-            .find('ul').should('include.class', 'flex flex-col gap-2').should('have.length', 3)
+            .find('ul').should('include.class', 'flex flex-col gap-2')
+            .should(($ul) => {
+            expect($ul).to.have.length(3)
+            expect($ul.eq(0)).to.be.visible
+            expect($ul.eq(0)).to.be.visible
+            expect($ul.eq(1)).to.be.visible
+            expect($ul.eq(2)).to.be.visible
+
+            // ul eq(2) should be visible in case if user has deployed squids
+
+            })
+
+
+
             .first()
             .parent()
             .find('li').should(($li) => {
