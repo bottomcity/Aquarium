@@ -119,12 +119,25 @@ describe("e2e test for Aquarium UI", () =>
             .type('Subsquid!123{enter}')
 
         //checking correctness of redirect after login on GitHub
+        cy.wait(5000)
+            .url().should('include', '/my-squids/')
 
-        cy.url().should('include', '/my-squids/')
-
+        cy.get('div[class="flex gap-2"]')
+            .parent()
+            .find('sqd-breadcrumbs')
+            .parent()
+            .find('svg')
+            .parent()
+            .find('div')
+            .parent()
+            .find('span').should(($span) => {
+            expect($span).to.have.length(5)
+            expect($span.eq(0)).to.contain('Aquarium')
+            expect($span.eq(2)).to.contain('My squids')
+        })
 
         cy.get('aside')
-            .wait(5000)
+
             .parent()
             .find('div').should(($div) => {
             expect($div).to.have.length(2)
