@@ -3,6 +3,7 @@
 import rgbHex from 'rgb-hex';
 
 const username = Cypress.env('username')
+let cookie
 
 beforeEach(function () {
     cy.visit('/')
@@ -21,9 +22,16 @@ it('correctness DOM elements on web UI in top of page', function () {
                 expect(rgbHex(bgcolor)).to.eq('ffffff')
             })
 
+    //below checking correctness of css for background sidebar and top bar
 
         cy.get('sqd-header')
+            /*.invoke('css', 'background-color')
+            .then((bgcolor) => {
+                expect(rgbHex(bgcolor)).to.eq('00000000')
+            })
+            */
             .parent()
+
             .find('div')
             .parent()
             .find('div')
@@ -74,8 +82,15 @@ it('checking correctness of collapsing sidebar', function () {
             .click()
             .get('sqd-icon[name="burger-opened"]').should('have.class', 'transition-transform duration-200 cursor-pointer color-inherit burger-collapsed')
 
+            /*.invoke('css', 'background-color')
+            .then((bgcolor) => {
+                expect(rgbHex(bgcolor)).to.eq('26282F')
+            })
+            */
+
         cy.get('aside')
             .should('have.class', "border-box h-full flex relative sidebar-width-transition ng-star-inserted sidebar-closed gap-[1px] w-[64px]")
+
             .parent()
             .find('div').should(($div) => {
                 expect($div).to.have.length(2)
@@ -131,6 +146,37 @@ it('checking correctness of expanding sidebar', function () {
         .find('span').should('to.be.visible')
     }),
 
+
+it('no ability to log in on public archives and contact support pages', function () {
+
+
+        cy.get('sqd-sidebar-item[hint="A library of pre-indexed data for your squid to access"]')
+            .click()
+        cy.get('img[alt="Github avatar"]')
+            .should('not.exist')
+        cy.get('sqd-sidebar-item[hint="Chat with our support team"]')
+            .click()
+        cy.get('img[alt="Github avatar"]')
+            .should('not.exist')
+
+}),
+
+    it('correct links on discord and telegram support', function () {
+
+
+        cy.get('sqd-sidebar-item[hint="Chat with our support team"]')
+            .click()
+        cy.get('a').should(($a) => {
+            expect($a).to.have.length(3)
+            expect($a.eq(1)).to.have.text('Discord')
+            expect($a.eq(1)).to.have.attr('href', 'https://discord.com/invite/subsquid')
+            expect($a.eq(2)).to.have.text('Telegram')
+            expect($a.eq(2)).to.have.attr('href',"https://t.me/HydraDevs")
+        })
+
+    }),
+
+
 it('correctness DOM elements on web UI in sidebar after log in', function () {
 
 
@@ -151,6 +197,12 @@ it('correctness DOM elements on web UI in sidebar after log in', function () {
 
         cy.wait(5000)
             .url().should('include', '/my-squids/')
+        cy.getCookie('access_token')
+            .should('exist')
+            .then((c) => {
+            // save cookie until we need it
+            cookie = c
+        })
 
         cy.get('div[class="flex items-center gap-3"]')
             .parent()
@@ -173,9 +225,9 @@ it('correctness DOM elements on web UI in sidebar after log in', function () {
             .parent()
             .find('span')
             .should(($span)=> {
-        expect($span).to.include.text(username)
+            expect($span).to.include.text(username)
     })
-            .pause()
+
 
         cy.get('div[class="flex gap-2"]')
             .parent()
@@ -235,7 +287,16 @@ it('correctness DOM elements on web UI in sidebar after log in', function () {
             .parent()
             .find('sqd-version-limit-alert').should('exist')
             // .should('to.include.text', 'more deployable squids available')
-})
+    }),
+
+/*it('session after log in', function () {
+
+        cy.getCookies().should('exist')
+        cy.setCookie('access_token', cookie)
+        cy.getCookie('access_token').should('have.property', 'value', cookie)
+
+    })
+/*
 
 
 
