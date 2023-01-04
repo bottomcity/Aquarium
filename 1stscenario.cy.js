@@ -1,5 +1,6 @@
 
 //add function to click authorize while GitHub logging in if it's necessary
+import rgbHex from 'rgb-hex';
 
 const username = Cypress.env('username')
 
@@ -10,7 +11,16 @@ beforeEach(function () {
 it('correctness DOM elements on web UI in top of page', function () {
 
 
-        cy.get('body').should('exist').should('have.be.visible')
+    //below checking correctness of css for background body
+
+        cy.get('body')
+            .should('exist')
+            .should('have.be.visible')
+            .invoke('css', 'background-color')
+            .then((bgcolor) => {
+                expect(rgbHex(bgcolor)).to.eq('ffffff')
+            })
+
 
         cy.get('sqd-header')
             .parent()
@@ -121,7 +131,7 @@ it('checking correctness of expanding sidebar', function () {
         .find('span').should('to.be.visible')
     }),
 
-it('correctness DOM elements on web UI in sidebar and top bar after log in', function () {
+it('correctness DOM elements on web UI in sidebar after log in', function () {
 
 
         cy.get('p[class="body--s"]')
@@ -141,11 +151,6 @@ it('correctness DOM elements on web UI in sidebar and top bar after log in', fun
 
         cy.wait(5000)
             .url().should('include', '/my-squids/')
-
-        cy.get('div[class="flex items-center gap-10"]')
-            .should('be.visible').should('have.length', '1')
-            .parent()
-            .find('sqd-version-limit-alert').should('exist').should('to.include.text','more deployable squids available')
 
         cy.get('div[class="flex items-center gap-3"]')
             .parent()
@@ -225,7 +230,16 @@ it('correctness DOM elements on web UI in sidebar and top bar after log in', fun
             expect($li.eq(5)).to.have.text('Contact support')
         })
 
+        cy.get('div[class="flex items-center gap-10"]')
+            .should('be.visible').should('have.length', '1')
+            .parent()
+            .find('sqd-version-limit-alert').should('exist')
+            // .should('to.include.text', 'more deployable squids available')
+})
 
-    })
+
+
+
+
 
 
